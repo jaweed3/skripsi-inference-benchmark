@@ -1,0 +1,515 @@
+\documentclass[12pt, a4paper]{report}
+
+% ─── Packages ───────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\babelprovide[import, main]{indonesian}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ─── Geometry ────────────────────────────────────────────────────────────────
+\geometry{top=3cm, bottom=3cm, left=4cm, right=3cm}
+
+% ─── Spacing ─────────────────────────────────────────────────────────────────
+\onehalfspacing
+
+% ─── Code Listing Style ──────────────────────────────────────────────────────
+\lstdefinestyle{codestyle}{
+  backgroundcolor=\color{gray!10},
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{green!50!black},
+  keywordstyle=\color{blue},
+  stringstyle=\color{orange},
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  frame=single,
+  rulecolor=\color{gray!40},
+  showstringspaces=false
+}
+\lstset{style=codestyle}
+
+% ─── Header/Footer ───────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ─── Hyperref Setup ──────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue,
+  pdftitle={Benchmarking PTQ dan QAT pada Arsitektur YOLO Modern untuk Inferensi Edge Heterogen},
+  pdfauthor={Fatih Jawwad Al-Mumtaz}
+}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+% ─── Cover ───────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  {\Large \textbf{BENCHMARKING POST-TRAINING QUANTIZATION DAN
+  QUANTIZATION-AWARE TRAINING PADA ARSITEKTUR YOLO MODERN
+  UNTUK INFERENSI EDGE HETEROGEN}}
+  \vspace{1.5cm}
+
+  {\large \textbf{SKRIPSI}}
+  \vspace{1cm}
+
+  Diajukan untuk memenuhi salah satu syarat memperoleh gelar\\
+  Sarjana Teknik pada Program Studi Teknik Komputer\\
+  Universitas Darussalam Gontor
+  \vspace{1.5cm}
+
+  % \includegraphics[width=4cm]{logo_unida.png}
+  \vspace{1.5cm}
+
+  Oleh:\\
+  \textbf{Fatih Jawwad Al-Mumtaz}\\
+  NIM: XXXXXXXXXX
+
+  \vfill
+  {\large
+    PROGRAM STUDI TEKNIK KOMPUTER\\
+    FAKULTAS SAINS DAN TEKNOLOGI\\
+    UNIVERSITAS DARUSSALAM GONTOR\\
+    PONOROGO\\
+    \the\year
+  }
+\end{titlepage}
+
+% ─── Front Matter ────────────────────────────────────────────────────────────
+\pagenumbering{roman}
+\setcounter{page}{2}
+
+\chapter*{HALAMAN PERSETUJUAN}
+\addcontentsline{toc}{chapter}{Halaman Persetujuan}
+\vspace{2cm}
+\noindent Skripsi berjudul \textit{``Benchmarking Post-Training Quantization dan
+Quantization-Aware Training pada Arsitektur YOLO Modern untuk Inferensi
+Edge Heterogen''} telah disetujui oleh pembimbing untuk diujikan.
+\vspace{3cm}
+\begin{flushright}
+  Ponorogo, \ldots\ldots\ldots\ldots 2025\\[2cm]
+  \underline{\hspace{5cm}}\\
+  Dosen Pembimbing\\
+  NIP: \ldots\ldots\ldots\ldots
+\end{flushright}
+\newpage
+
+\chapter*{ABSTRAK}
+\addcontentsline{toc}{chapter}{Abstrak}
+\noindent\textbf{Fatih Jawwad Al-Mumtaz.}
+\textit{Benchmarking Post-Training Quantization dan Quantization-Aware
+Training pada Arsitektur YOLO Modern untuk Inferensi Edge Heterogen.}
+Skripsi. Program Studi Teknik Komputer, Universitas Darussalam Gontor,
+Ponorogo. \the\year.
+
+\vspace{0.5cm}
+Deployment model deteksi objek berbasis YOLO pada perangkat edge
+dengan sumber daya terbatas memerlukan teknik optimasi inferensi yang
+tepat. Dua pendekatan utama yang umum digunakan adalah
+\textit{Post-Training Quantization} (PTQ) dan
+\textit{Quantization-Aware Training} (QAT), yang masing-masing memiliki
+trade-off antara akurasi, latensi, dan biaya komputasi.
+Penelitian ini melakukan benchmarking sistematis terhadap PTQ dan QAT
+pada arsitektur YOLOv8n dan YOLOv26n di tiga platform hardware heterogen:
+Apple Silicon M4 (Mac Mini M4), GPU NVIDIA RTX 4060, dan MCU-class
+ESP32-S3. Metrik yang diukur meliputi latensi (mean, p95, p99),
+throughput (FPS), akurasi (mAP@0.5), ukuran model, dan konsumsi daya.
+Hasil penelitian diharapkan dapat memberikan panduan praktis bagi
+pengembang sistem edge AI dalam memilih teknik optimasi yang sesuai
+dengan karakteristik hardware target.
+
+\vspace{0.5cm}
+\noindent\textbf{Kata kunci:} kuantisasi, YOLO, edge AI, inferensi heterogen, PTQ, QAT, Apple Silicon, ESP32
+\newpage
+
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{Abstract}
+\noindent\textbf{Fatih Jawwad Al-Mumtaz.}
+\textit{Benchmarking Post-Training Quantization and Quantization-Aware
+Training on Modern YOLO Architectures for Heterogeneous Edge Inference.}
+Undergraduate Thesis. Department of Computer Engineering,
+Universitas Darussalam Gontor, Ponorogo. \the\year.
+
+\vspace{0.5cm}
+Deploying YOLO-based object detection models on resource-constrained
+edge devices requires careful selection of inference optimization
+techniques. Post-Training Quantization (PTQ) and Quantization-Aware
+Training (QAT) are the two dominant approaches, each presenting
+distinct trade-offs between accuracy, latency, and computational cost.
+This study conducts a systematic benchmark of PTQ and QAT on YOLOv8n
+and YOLOv26n across three heterogeneous hardware platforms: Apple
+Silicon M4 (Mac Mini M4), NVIDIA RTX 4060 GPU, and MCU-class ESP32-S3.
+Evaluation metrics include latency (mean, p95, p99), throughput (FPS),
+accuracy (mAP@0.5), model size, and power consumption. Findings are
+expected to provide actionable guidance for edge AI developers in
+selecting optimization strategies suited to their target hardware.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} quantization, YOLO, edge AI, heterogeneous inference, PTQ, QAT, Apple Silicon, ESP32
+\newpage
+
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+
+% ─── Main Matter ─────────────────────────────────────────────────────────────
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{PENDAHULUAN}
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Latar Belakang}
+
+Perkembangan model deteksi objek berbasis deep learning, khususnya
+keluarga YOLO (\textit{You Only Look Once}), telah memungkinkan
+penerapan computer vision secara real-time pada berbagai aplikasi
+praktis seperti pengawasan, robotika, dan sistem otonom \cite{redmon2016yolo}.
+Namun, deployment model-model ini pada perangkat edge dengan sumber
+daya komputasi terbatas tetap menjadi tantangan signifikan, terutama
+karena tingginya kebutuhan memori dan throughput komputasi dari
+model berperforma tinggi \cite{jacob2018quantization}.
+
+Teknik kompresi model, terutama kuantisasi bobot dan aktivasi,
+telah terbukti efektif dalam mengurangi ukuran model dan meningkatkan
+kecepatan inferensi tanpa kehilangan akurasi yang signifikan \cite{han2015deep}.
+Dua pendekatan utama yang banyak diteliti adalah
+\textit{Post-Training Quantization} (PTQ) dan
+\textit{Quantization-Aware Training} (QAT).
+PTQ mengkuantisasi model setelah pelatihan selesai menggunakan
+dataset kalibrasi kecil, sehingga tidak memerlukan proses pelatihan
+ulang \cite{banner2019post}.
+Sebaliknya, QAT mengintegrasikan efek kuantisasi selama proses
+pelatihan sehingga model dapat beradaptasi terhadap error kuantisasi,
+menghasilkan akurasi yang lebih tinggi terutama pada presisi rendah \cite{jacob2018quantization}.
+
+Meskipun perbandingan PTQ dan QAT telah banyak diteliti, terdapat
+kesenjangan literatur yang signifikan pada kombinasi hardware tertentu.
+Studi yang ada umumnya berfokus pada platform x86 CPU atau GPU NVIDIA \cite{wangqyolo2023},
+smartphone berbasis ARM \cite{idama2024qatfp}, atau Raspberry Pi \cite{boddu2025yolov4}.
+Sejauh penelusuran yang dilakukan, belum terdapat studi yang
+secara sistematis membandingkan PTQ dan QAT pada arsitektur YOLO
+modern di platform Apple Silicon M4 dengan Neural Engine,
+GPU NVIDIA RTX 4060, dan perangkat MCU-class ESP32-S3 secara
+bersamaan dalam satu kerangka eksperimen yang unified.
+
+\section{Rumusan Masalah}
+
+Berdasarkan latar belakang di atas, rumusan masalah penelitian ini adalah:
+\begin{enumerate}
+  \item Bagaimana trade-off latensi, throughput, akurasi, dan konsumsi daya
+    antara PTQ dan QAT pada arsitektur YOLOv8n dan YOLOv26n di platform Apple Silicon M4?
+  \item Bagaimana perbandingan karakteristik inferensi PTQ dan QAT antara
+    platform Apple Silicon M4, GPU NVIDIA RTX 4060, dan MCU-class ESP32-S3?
+  \item Format kuantisasi mana (FP32, FP16, PTQ INT8, QAT INT8) yang memberikan
+    keseimbangan optimal antara akurasi dan efisiensi inferensi pada masing-masing platform?
+\end{enumerate}
+
+\section{Tujuan Penelitian}
+
+\begin{enumerate}
+  \item Mengukur dan membandingkan latensi, throughput, akurasi, dan konsumsi daya
+    PTQ dan QAT pada YOLOv8n dan YOLOv26n di tiga platform hardware heterogen.
+  \item Mengidentifikasi karakteristik hardware-specific yang mempengaruhi
+    efektivitas masing-masing teknik kuantisasi.
+  \item Memberikan panduan berbasis data empiris untuk pemilihan teknik
+    optimasi inferensi pada sistem edge AI.
+\end{enumerate}
+
+\section{Batasan Penelitian}
+
+\begin{enumerate}
+  \item Model dibatasi pada YOLOv8n dan YOLOv26n.
+  \item Platform hardware: Mac Mini M4, NVIDIA RTX 4060, dan ESP32-S3 Sense.
+  \item Framework inferensi: ONNX Runtime, OpenVINO, TensorFlow Lite, dan CoreML.
+  \item Dataset evaluasi: subset COCO val2017 dan dataset RescueVision.
+  \item Pruning dan knowledge distillation berada di luar cakupan penelitian ini.
+\end{enumerate}
+
+\section{Manfaat Penelitian}
+
+\begin{enumerate}
+  \item Referensi empiris bagi pengembang sistem edge AI dalam memilih
+    teknik optimasi inferensi sesuai karakteristik hardware.
+  \item Benchmark baseline pada platform Apple Silicon M4 dan ESP32-S3
+    yang belum tersedia dalam literatur yang ada.
+  \item Pipeline benchmarking yang reproducible dan open-source
+    sebagai kontribusi komunitas.
+\end{enumerate}
+
+\section{Sistematika Penulisan}
+
+Skripsi ini disusun dalam lima bab. Bab I memaparkan latar belakang,
+rumusan masalah, tujuan, batasan, dan manfaat penelitian.
+Bab II mengulas landasan teori dan kajian pustaka terkait kuantisasi
+model, arsitektur YOLO, dan platform edge computing.
+Bab III menjelaskan metodologi penelitian meliputi desain eksperimen,
+pipeline benchmark, dan prosedur pengukuran.
+Bab IV menyajikan hasil eksperimen dan analisis komparatif.
+Bab V memuat kesimpulan dan saran untuk penelitian selanjutnya.
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{TINJAUAN PUSTAKA}
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Deteksi Objek Real-Time}
+
+% TODO: ~1 halaman
+% Poin: two-stage vs one-stage, YOLO sebagai dominant one-stage detector,
+% evolusi dari v1 ke v11/v26, trade-off speed vs accuracy
+
+\section{Kuantisasi Model Neural Network}
+
+\subsection{Post-Training Quantization (PTQ)}
+
+% TODO: ~1 halaman
+% Poin: definisi, calibration dataset, MinMax vs percentile vs MSE,
+% symmetric vs asymmetric, kelebihan (no retraining) vs kekurangan (accuracy drop)
+
+\subsection{Quantization-Aware Training (QAT)}
+
+% TODO: ~1 halaman
+% Poin: fake quantization nodes, STE (Straight-Through Estimator),
+% kelebihan (lebih akurat) vs kekurangan (butuh retraining, GPU cost)
+
+\subsection{Perbandingan PTQ dan QAT}
+
+% TODO: tabel perbandingan, cite Jacob 2018 dan Zhang 2025
+
+\section{Arsitektur YOLO}
+
+\subsection{YOLOv8}
+% TODO: anchor-free, CSP backbone, decoupled head, parameter count
+
+\subsection{YOLOv26n}
+% TODO: arsitektur terbaru, perbandingan parameter dengan v8n
+
+\section{Platform Edge Computing}
+
+\subsection{Apple Silicon M4}
+% TODO: Neural Engine, unified memory, CoreML, ONNX Runtime Metal EP
+
+\subsection{NVIDIA RTX 4060}
+% TODO: CUDA, TensorRT, ONNX Runtime CUDA EP
+
+\subsection{ESP32-S3}
+% TODO: Xtensa LX7, vector instructions, PSRAM, TFLite Micro
+
+\section{Framework Inferensi}
+% TODO: ONNX Runtime, OpenVINO, TFLite, CoreML — satu paragraf each
+
+\section{Penelitian Terkait}
+
+\begin{table}[H]
+  \centering
+  \caption{Perbandingan Penelitian Terkait}
+  \label{tab:related_work}
+  \begin{tabularx}{\textwidth}{lXXXX}
+    \toprule
+    \textbf{Penelitian} & \textbf{Model} & \textbf{Hardware} &
+    \textbf{Teknik} & \textbf{Gap} \\
+    \midrule
+    \cite{idama2024qatfp} & Custom YOLO & Smartphone (Pixel 4) &
+      QAT + Pruning & Tidak ada PTQ; model custom \\
+    \cite{wangqyolo2023} & YOLOv5/v7 & RTX 4090, x86 CPU &
+      PTQ & Tidak ada QAT; tidak ada Apple Silicon \\
+    \cite{seo2025lltq} & YOLOv7/9/10 & PASCAL VOC only &
+      QAT & Tidak ada deployment nyata \\
+    \cite{boddu2025yolov4} & YOLOv4-Tiny & Raspberry Pi 5 &
+      PTQ & Model lama; satu hardware; tidak ada QAT \\
+    \textbf{Penelitian ini} & YOLOv8n, YOLOv26n &
+      M4 + RTX 4060 + ESP32-S3 &
+      PTQ vs QAT & Apple Silicon M4 + MCU-class; head-to-head \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{METODOLOGI PENELITIAN}
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Desain Penelitian}
+
+Penelitian ini menggunakan pendekatan eksperimental kuantitatif dengan
+desain benchmarking sistematis. Variabel bebas adalah teknik kuantisasi
+(FP32, FP16, PTQ INT8, QAT INT8) dan platform hardware (M4, RTX 4060, ESP32-S3).
+Variabel terikat adalah latensi inferensi, throughput, akurasi deteksi,
+ukuran model, dan konsumsi daya.
+
+\section{Dataset}
+
+\subsection{Dataset Kalibrasi PTQ}
+
+Dataset kalibrasi PTQ menggunakan 500 gambar yang diambil secara acak
+dari COCO train2017. Ukuran ini dipilih berdasarkan rekomendasi dari
+literatur yang menunjukkan bahwa 100--500 gambar cukup untuk kalibrasi
+PTQ yang stabil \cite{banner2019post}.
+
+\subsection{Dataset Evaluasi Akurasi}
+
+Evaluasi akurasi menggunakan dua dataset:
+\begin{enumerate}
+  \item COCO val2017 (5.000 gambar) untuk perbandingan dengan literatur yang ada.
+  \item Dataset RescueVision (domain-specific rescue imagery) untuk evaluasi
+    pada use case yang relevan.
+\end{enumerate}
+
+\section{Model}
+
+\subsection{YOLOv8n}
+
+YOLOv8n digunakan sebagai baseline yang well-established dengan referensi
+literatur yang luas, memungkinkan perbandingan langsung dengan studi sebelumnya.
+
+\subsection{YOLOv26n}
+
+YOLOv26n merepresentasikan generasi terbaru arsitektur YOLO.
+Baseline model telah tersedia dari pipeline RescueVision dengan
+mAP@0.5 = 0.528 dan ukuran ONNX 11.70MB.
+
+\section{Pipeline Eksperimen}
+
+Pipeline eksperimen terdiri dari empat tahap utama:
+\begin{enumerate}
+  \item \textbf{Export}: Model PyTorch diekspor ke format ONNX sebagai representasi intermediate.
+  \item \textbf{Optimasi}: Dari ONNX, model dioptimasi ke format target
+    (FP16, PTQ INT8, QAT INT8) menggunakan framework yang sesuai per platform.
+  \item \textbf{Benchmark}: Inferensi dijalankan dengan 10 iterasi warmup
+    diikuti 100 iterasi pengukuran per konfigurasi.
+  \item \textbf{Logging}: Semua hasil dicatat ke MLflow untuk reproducibility.
+\end{enumerate}
+
+\section{Prosedur Benchmark}
+
+\subsection{Pengukuran Latensi}
+
+Latensi diukur menggunakan \texttt{time.perf\_counter()} dengan input dummy
+berukuran $640 \times 640 \times 3$. Warmup sebanyak 10 iterasi dilakukan
+sebelum pengukuran untuk menghilangkan efek cold start.
+Statistik yang dicatat: mean, standar deviasi, p95, p99.
+
+\subsection{Pengukuran Akurasi}
+
+Akurasi diukur menggunakan mAP@0.5 dan mAP@0.5:0.95 pada dataset evaluasi
+dengan confidence threshold 0.25 dan IoU threshold 0.45.
+
+\subsection{Pengukuran Konsumsi Daya}
+
+Konsumsi daya diukur menggunakan:
+\begin{itemize}
+  \item Mac Mini M4: \texttt{powermetrics} (macOS)
+  \item RTX 4060: \texttt{nvidia-smi} power query
+  \item ESP32-S3: USB inline power meter
+\end{itemize}
+
+\section{Experiment Tracking}
+
+Seluruh eksperimen ditracking menggunakan MLflow dengan parameter logging
+meliputi: nama model, format kuantisasi, platform hardware, framework inferensi,
+dan seluruh metrik hasil pengukuran. Dataset dan model checkpoint
+di-version menggunakan DVC.
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{HASIL DAN PEMBAHASAN}
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Hasil Benchmark Mac Mini M4}
+
+% TODO: isi setelah eksperimen selesai
+
+\begin{table}[H]
+  \centering
+  \caption{Hasil Benchmark YOLOv8n pada Mac Mini M4}
+  \label{tab:m4_yolov8n}
+  \begin{tabular}{lrrrr}
+    \toprule
+    \textbf{Format} & \textbf{Latency mean (ms)} &
+    \textbf{p99 (ms)} & \textbf{FPS} & \textbf{mAP@0.5} \\
+    \midrule
+    FP32     & -- & -- & -- & -- \\
+    FP16     & -- & -- & -- & -- \\
+    PTQ INT8 & -- & -- & -- & -- \\
+    QAT INT8 & -- & -- & -- & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Hasil Benchmark YOLOv26n pada Mac Mini M4}
+  \label{tab:m4_yolov26n}
+  \begin{tabular}{lrrrr}
+    \toprule
+    \textbf{Format} & \textbf{Latency mean (ms)} &
+    \textbf{p99 (ms)} & \textbf{FPS} & \textbf{mAP@0.5} \\
+    \midrule
+    FP32     & -- & -- & -- & -- \\
+    FP16     & -- & -- & -- & -- \\
+    PTQ INT8 & -- & -- & -- & -- \\
+    QAT INT8 & -- & -- & -- & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Hasil Benchmark RTX 4060}
+% TODO: isi setelah eksperimen selesai
+
+\section{Hasil Benchmark ESP32-S3}
+% TODO: isi setelah eksperimen selesai
+
+\section{Analisis Komparatif Cross-Platform}
+% TODO: analisis setelah semua data terkumpul
+
+\section{Pembahasan}
+% TODO: explain WHY angkanya seperti itu — ini bagian terpenting skripsi
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{KESIMPULAN DAN SARAN}
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Kesimpulan}
+% TODO: isi setelah penelitian selesai
+
+\section{Saran}
+% TODO: isi setelah penelitian selesai
+
+% ─── Bibliography ────────────────────────────────────────────────────────────
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

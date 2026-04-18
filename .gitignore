@@ -1,0 +1,56 @@
+
+# ─── LaTeX build artifacts ─────────────────────────────
+
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+
+# ─── Latexmk ──────────────────────────────────────────
+
+latexmkrc
+
+# ─── Temporary / backup ───────────────────────────────
+
+*~
+*.swp
+*.swo
+*.tmp
+
+# ─── Vim / Neovim ─────────────────────────────────────
+
+.session
+.nvimlog
+shada
+
+# ─── OS junk ──────────────────────────────────────────
+
+.DS_Store
+Thumbs.db
+
+# ─── PDFs (optional, pilih salah satu) ────────────────
+
+# Kalau PDF mau di-track:
+
+# (biarin kosong)
+
+# Kalau PDF mau di-ignore:
+
+# *.pdf
+
+# ─── Bibliography cache (opsional) ────────────────────
+
+*.run.xml
+
+# ─── Build directories (kalau nanti pakai) ────────────
+
+build/
+out/
+dist/
